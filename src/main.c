@@ -20,9 +20,9 @@
 #define false (bool)0
 
 void drawGameWin(void);
-bool trySlide(int **grid, int gridSize, int highlightX, int highlightY);
-bool gameWon(int **grid, int gridSize);
-void shuffleGrid(int **grid, int gridSize);
+bool trySlide(void);
+bool gameWon(void);
+void shuffleGrid(void);
 
 int gridSize = 4;
 int **grid;
@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
         grid[y][x] = y*gridSize + x + 1;
     grid[gridSize-1][gridSize-1] = -1;
 
-    shuffleGrid(grid, gridSize);
+    shuffleGrid();
 
 	initscr();
 	clear();
@@ -133,28 +133,30 @@ int main(int argc, char **argv) {
 			case KEY_ENTER:
             case '\n':
             case ' ':
-                if (trySlide(grid, gridSize, highlightX, highlightY))
+                if (trySlide())
                     moves++;
 
 				break;
 		}
 		drawGameWin();
 
-        if (won = gameWon(grid, gridSize)) {
+        if (won = gameWon()) {
             mvwprintw(gameWin, 0, 1, "WON!");
             wgetch(gameWin);
             break;
         }
 	}	
 
-	clrtoeol();
-	refresh();
 	endwin();
 
     if (won) 
         printf("Size: %d, Seed: %u, Moves: %d\n", gridSize, seed, moves);
     else
         printf("Size: %d, Seed: %u, Moves: N/A\n", gridSize, seed);
+
+    for (int i = 0; i < gridSize; i++)
+        free(grid[i]);
+    free(grid);
 
 	return 0;
 }
@@ -184,7 +186,7 @@ void drawGameWin() {
 	wrefresh(gameWin);
 }
 
-bool trySlide(int **grid, int gridSize, int highlightX, int highlightY) {
+bool trySlide() {
     for (int i = 0; i < gridSize; i++) {
         int dx = 0, dy = 0;
         switch (i) {
@@ -215,7 +217,7 @@ bool trySlide(int **grid, int gridSize, int highlightX, int highlightY) {
     return false;
 }
 
-bool gameWon(int **grid, int gridSize) {
+bool gameWon() {
     if (grid[gridSize-1][gridSize-1] >= 0)
         return false;
 
@@ -231,12 +233,13 @@ bool gameWon(int **grid, int gridSize) {
     return true;
 }
 
-void shuffleGrid(int **grid, int gridSize) {
+void shuffleGrid() {
     int x = 0, y = 0;
     for (x = 0; x < gridSize; x++)
     for (y = 0; y < gridSize; y++) {
-        if (grid[y][x] < 0) break;
+        if (grid[y][x] < 0) goto endloop;
     }
+endloop:
 
     for (int i = 0; i < 1000 * gridSize * gridSize; i++) {
         int dx = 0, dy = 0;

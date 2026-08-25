@@ -12,6 +12,8 @@ Usage: `slide [OPTIONS]`
 Options
   -h, --help
           Show this help message
+      --no-colour
+          Disable colours
       --seed <seed> 
           Set the seed for generating the puzzle
       --size <size>

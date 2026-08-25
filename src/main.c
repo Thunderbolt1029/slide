@@ -10,6 +10,7 @@
     "The classic slide puzzle\n\n" \
     "Options\n" \
     "  -h, --help"        "\n          " "Show this help message\n" \
+    "      --no-colour"   "\n          " "Disable colours\n" \
     "      --seed <seed>" "\n          " "Set the seed for generating the puzzle\n" \
     "      --size <size>" "\n          " "Set the size of the grid for this puzzle\n" 
 
@@ -35,13 +36,16 @@ unsigned int seed;
 int moves = 0;
 
 int main(int argc, char **argv) {	
-    bool haveSeed = false;
+    bool haveSeed = false, colourEnable = true;
 
     argc--; argv++;
     while (argc > 0) {
         if (!strcmp(*argv, "-h") || !strcmp(*argv, "--help")) {
             printf(USAGE_MESSAGE);
             return 0;
+        }
+        else if (!strcmp(*argv, "--no-colour")) {
+            colourEnable = false;
         }
         else if (!strcmp(*argv, "--seed")) {
             argc--; argv++;
@@ -81,6 +85,10 @@ int main(int argc, char **argv) {
 	noecho();
 	cbreak();	/* Line buffering disabled. pass on everything */
     curs_set(0);
+
+    if (colourEnable)
+        start_color();
+    init_pair(1, COLOR_GREEN, COLOR_BLACK);
 
     int maxX, maxY;
     getmaxyx(stdscr, maxY, maxX);
@@ -174,12 +182,16 @@ void drawGameWin() {
     for (int y = 0; y < gridSize; y++) {	
         if(x == highlightX && y == highlightY)
             wattron(gameWin, A_REVERSE); 
+        if (grid[y][x] == y*gridSize + x + 1)
+            wattron(gameWin, COLOR_PAIR(1));
 
         if (grid[y][x] < 0)
             mvwprintw(gameWin, 1+y*TILE_HEIGHT,1+x*TILE_WIDTH, "[   ]");
         else
             mvwprintw(gameWin, 1+y*TILE_HEIGHT,1+x*TILE_WIDTH, "[%3d]", grid[y][x]);
 
+        if (grid[y][x] == y*gridSize + x + 1)
+            wattroff(gameWin, COLOR_PAIR(1));
         if(x == highlightX && y == highlightY)
 			wattroff(gameWin, A_REVERSE);
 	}

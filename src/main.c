@@ -173,9 +173,9 @@ int main(int argc, char **argv) {
 void drawGameWin() {
 	box(gameWin, 0, 0);
 
-    char seedStr[gridSize];
+    char seedStr[gameWinWidth];
     int seedStrLen = snprintf(seedStr, gameWinWidth, "Seed:%d", seed);
-    mvwprintw(gameWin, 0, gameWinWidth-1-seedStrLen, seedStr);
+    mvwprintw(gameWin, 0, gameWinWidth-1-seedStrLen, "%s", seedStr);
     mvwprintw(gameWin, gameWinHeight-1, 1, "Moves:%d", moves);
 
     for (int x = 0; x < gridSize; x++)

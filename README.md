@@ -3,7 +3,7 @@ slide
 
 The classic slide puzzle
 
-Written in C with ncurses to provide a tui
+Written in C with ncurses to provide a TUI
 
 # Usage
 Usage: `slide [OPTIONS]`
